@@ -17,12 +17,11 @@ use Sylius\Component\Attribute\Model\AttributeTypes;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * Attribute type.
- *
- * @author Paweł Jędrzejewski <pawel@sylius.org>
- * @author Leszek Prabucki <leszek.prabucki@gmail.com>
+ * Attribute Translation type.
+
+ * @author Gonzalo Vilaseca <gvilaseca@reiss.co.uk>
  */
-class AttributeType extends AbstractResourceType
+class AttributeTranslationType extends AbstractResourceType
 {
     /**
      * Subject name.
@@ -51,21 +50,9 @@ class AttributeType extends AbstractResourceType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', array(
-                'label' => 'sylius.form.attribute.name'
-            ))
-            ->add('translations', 'a2lix_translationsForms', array(
-                // TODO Form as a service?
-                'form_type' => new AttributeTranslationType(
-                        $this->dataClass.'Translation',
-                        $this->validationGroups,
-                        $this->subjectName),
+            ->add('presentation', 'text', array(
                 'label' => 'sylius.form.attribute.presentation'
             ))
-            ->add('type', 'choice', array(
-                'choices' => AttributeTypes::getChoices()
-            ))
-            ->addEventSubscriber(new BuildAttributeFormChoicesListener($builder->getFormFactory()))
         ;
     }
 
@@ -74,6 +61,6 @@ class AttributeType extends AbstractResourceType
      */
     public function getName()
     {
-        return sprintf('sylius_%s_attribute', $this->subjectName);
+        return sprintf('sylius_%s_attribute_translation', $this->subjectName);
     }
 }
