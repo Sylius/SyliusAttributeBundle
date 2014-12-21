@@ -4,5 +4,5 @@
 sylius:
   form:
     attribute:
-      name: Belső név
-      presentation: Bemutató
+      name: Унутранае імя
+      presentation: Выгляд
