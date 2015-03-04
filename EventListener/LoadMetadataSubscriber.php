@@ -54,19 +54,22 @@ class LoadMetadataSubscriber implements EventSubscriber
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $metadata = $eventArgs->getClassMetadata();
+        $cmf = $eventArgs->getEntityManager()->getMetadataFactory();
 
         foreach ($this->subjects as $subject => $class) {
             if ($class['attribute_value']['model'] !== $metadata->getName()) {
                 continue;
             }
 
+            $subject = $class['subject'];
+            $subjectMetadata = $cmf->getMetadataFor($subject);
             $subjectMapping = array(
                 'fieldName'     => 'subject',
-                'targetEntity'  => $class['subject'],
+                'targetEntity'  => $subject,
                 'inversedBy'    => 'attributes',
                 'joinColumns'   => array(array(
                     'name'                 => $subject.'_id',
-                    'referencedColumnName' => 'id',
+                    'referencedColumnName' => $subjectMetadata->fieldMappings['id']['columnName'],
                     'nullable'             => false,
                     'onDelete'             => 'CASCADE'
                 ))
@@ -74,12 +77,14 @@ class LoadMetadataSubscriber implements EventSubscriber
 
             $this->mapManyToOne($metadata, $subjectMapping);
 
+            $attributeModel = $class['attribute']['model'];
+            $attributeMetadata = $cmf->getMetadataFor($attributeModel);
             $attributeMapping = array(
                 'fieldName'     => 'attribute',
-                'targetEntity'  => $class['attribute']['model'],
+                'targetEntity'  => $attributeModel,
                 'joinColumns'   => array(array(
                     'name'                 => 'attribute_id',
-                    'referencedColumnName' => 'id',
+                    'referencedColumnName' => $attributeMetadata->fieldMappings['id']['columnName'],
                     'nullable'             => false,
                     'onDelete'             => 'CASCADE'
                 ))
