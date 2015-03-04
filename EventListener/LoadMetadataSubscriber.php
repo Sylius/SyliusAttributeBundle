@@ -61,15 +61,15 @@ class LoadMetadataSubscriber implements EventSubscriber
                 continue;
             }
 
-            $subject = $class['subject'];
-            $subjectMetadata = $cmf->getMetadataFor($subject);
+            $targetEntity = $class['subject'];
+            $targetEntityMetadata = $cmf->getMetadataFor($targetEntity);
             $subjectMapping = array(
                 'fieldName'     => 'subject',
-                'targetEntity'  => $subject,
+                'targetEntity'  => $targetEntity,
                 'inversedBy'    => 'attributes',
                 'joinColumns'   => array(array(
                     'name'                 => $subject.'_id',
-                    'referencedColumnName' => $subjectMetadata->fieldMappings['id']['columnName'],
+                    'referencedColumnName' => $targetEntityMetadata->fieldMappings['id']['columnName'],
                     'nullable'             => false,
                     'onDelete'             => 'CASCADE'
                 ))
