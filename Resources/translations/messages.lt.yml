@@ -4,5 +4,5 @@
 sylius:
   form:
     attribute:
-      name: Nombre interno
-      presentation: Presentación
+      name: Vidinis pavadinimas
+      presentation: Prezentacija
