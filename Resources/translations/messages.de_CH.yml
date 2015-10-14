@@ -4,6 +4,5 @@
 sylius:
   form:
     attribute:
-      name: Dahili isim
-      presentation: Sunum
-      type: Türü
+      name: Interner Name
+      presentation: Präsentation
