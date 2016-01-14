@@ -4,5 +4,5 @@
 sylius:
   form:
     attribute:
-      name: Interne naam
-      presentation: Weergawe
+      code: Mã
+      name: Tên

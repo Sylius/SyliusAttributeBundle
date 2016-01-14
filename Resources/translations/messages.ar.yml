@@ -4,5 +4,6 @@
 sylius:
   form:
     attribute:
-      code: Code
-      name: Name
+      add: اضافة
+      choices: الخيارات
+      name: الاسم
