@@ -4,7 +4,4 @@
 sylius:
     form:
         attribute:
-            name: Nama
-            type: Jenis
-        attribute_type:
-            select: Pilih
+            name: Nosaukums
