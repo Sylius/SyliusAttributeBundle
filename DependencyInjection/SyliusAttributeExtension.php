@@ -55,9 +55,9 @@ final class SyliusAttributeExtension extends AbstractResourceExtension
             AsAttributeType::class,
             static function (ChildDefinition $definition, AsAttributeType $attribute): void {
                 $definition->addTag(AsAttributeType::SERVICE_TAG, [
-                    'attribute-type' => $attribute->getType(),
+                    'attribute_type' => $attribute->getType(),
                     'label' => $attribute->getLabel(),
-                    'form-type' => $attribute->getFormType(),
+                    'form_type' => $attribute->getFormType(),
                     'priority' => $attribute->getPriority(),
                 ]);
             },

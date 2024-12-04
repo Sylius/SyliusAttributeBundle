@@ -38,9 +38,9 @@ final class SyliusAttributeExtensionTest extends AbstractExtensionTestCase
             'acme.attribute_type_with_attribute',
             AsAttributeType::SERVICE_TAG,
             [
-                'attribute-type' => 'test',
+                'attribute_type' => 'test',
                 'label' => 'Test',
-                'form-type' => 'SomeFormType',
+                'form_type' => 'SomeFormType',
                 'priority' => 15,
             ],
         );
