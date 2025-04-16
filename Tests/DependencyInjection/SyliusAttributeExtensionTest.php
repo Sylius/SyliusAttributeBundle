@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\Definition;
 
 final class SyliusAttributeExtensionTest extends AbstractExtensionTestCase
 {
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_autoconfigures_attribute_type_with_attribute(): void
     {
         $this->container->setDefinition(
@@ -47,7 +47,7 @@ final class SyliusAttributeExtensionTest extends AbstractExtensionTestCase
         );
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_autoconfigures_attribute_type_with_attribute_configuration(): void
     {
         $this->container->setDefinition(

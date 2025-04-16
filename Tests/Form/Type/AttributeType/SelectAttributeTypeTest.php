@@ -28,9 +28,7 @@ final class SelectAttributeTypeTest extends TypeTestCase
 
     private ObjectProphecy $translationProvider;
 
-    /**
-     * @test
-     */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_return_all_choices(): void
     {
         $this->assertChoicesLabels(['value 1'], [
