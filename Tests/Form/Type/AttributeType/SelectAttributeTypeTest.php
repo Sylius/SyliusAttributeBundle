@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Sylius\Bundle\AttributeBundle\Tests\Form\Type\AttributeType;
 
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\Attributes\Test;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Sylius\Bundle\AttributeBundle\Form\Type\AttributeType\SelectAttributeType;
