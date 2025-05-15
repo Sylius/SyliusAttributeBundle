@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Tests\Sylius\Bundle\AttributeBundle\Validator\Constraints;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
-use Sylius\Bundle\AttributeBundle\Validator\Constraints\AttributeTypeValidator;
 use InvalidArgumentException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\AttributeType;
+use Sylius\Bundle\AttributeBundle\Validator\Constraints\AttributeTypeValidator;
 use Sylius\Component\Attribute\Model\AttributeInterface;
 use Sylius\Component\Registry\ServiceRegistryInterface;
 use Symfony\Component\Validator\Constraint;
@@ -27,15 +27,14 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 final class AttributeTypeValidatorTest extends TestCase
 {
-    /**
-     * @var ServiceRegistryInterface|MockObject
-     */
+    /** @var ServiceRegistryInterface|MockObject */
     private MockObject $attributeTypesRegistryMock;
-    /**
-     * @var ExecutionContextInterface|MockObject
-     */
+
+    /** @var ExecutionContextInterface|MockObject */
     private MockObject $contextMock;
+
     private AttributeTypeValidator $attributeTypeValidator;
+
     protected function setUp(): void
     {
         $this->attributeTypesRegistryMock = $this->createMock(ServiceRegistryInterface::class);

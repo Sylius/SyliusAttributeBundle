@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace Tests\Sylius\Bundle\AttributeBundle\Validator\Constraints;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use DateTime;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidAttributeValue;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidAttributeValueValidator;
 use Sylius\Component\Attribute\AttributeType\AttributeTypeInterface;
@@ -28,15 +28,14 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final class ValidAttributeValueValidatorTest extends TestCase
 {
-    /**
-     * @var ServiceRegistryInterface|MockObject
-     */
+    /** @var ServiceRegistryInterface|MockObject */
     private MockObject $attributeTypesRegistryMock;
-    /**
-     * @var ExecutionContextInterface|MockObject
-     */
+
+    /** @var ExecutionContextInterface|MockObject */
     private MockObject $contextMock;
+
     private ValidAttributeValueValidator $validAttributeValueValidator;
+
     protected function setUp(): void
     {
         $this->attributeTypesRegistryMock = $this->createMock(ServiceRegistryInterface::class);

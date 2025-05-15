@@ -13,18 +13,19 @@ declare(strict_types=1);
 
 namespace Tests\Sylius\Bundle\AttributeBundle\Doctrine\ORM\Subscriber;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Sylius\Bundle\AttributeBundle\Doctrine\ORM\Subscriber\LoadMetadataSubscriber;
 
 final class LoadMetadataSubscriberTest extends TestCase
 {
     private LoadMetadataSubscriber $loadMetadataSubscriber;
+
     protected function setUp(): void
     {
         $this->loadMetadataSubscriber = new LoadMetadataSubscriber([

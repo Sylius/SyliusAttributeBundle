@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Tests\Sylius\Bundle\AttributeBundle\Validator\Constraints;
 
-use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\MockObject\MockObject;
-use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidTextAttributeConfigurationValidator;
 use InvalidArgumentException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidSelectAttributeConfiguration;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidTextAttributeConfiguration;
+use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidTextAttributeConfigurationValidator;
 use Sylius\Component\Attribute\AttributeType\SelectAttributeType;
 use Sylius\Component\Attribute\AttributeType\TextAttributeType;
 use Sylius\Component\Attribute\Model\AttributeInterface;
@@ -26,11 +26,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final class ValidTextAttributeConfigurationValidatorTest extends TestCase
 {
-    /**
-     * @var ExecutionContextInterface|MockObject
-     */
+    /** @var ExecutionContextInterface|MockObject */
     private MockObject $contextMock;
+
     private ValidTextAttributeConfigurationValidator $validTextAttributeConfigurationValidator;
+
     protected function setUp(): void
     {
         $this->contextMock = $this->createMock(ExecutionContextInterface::class);

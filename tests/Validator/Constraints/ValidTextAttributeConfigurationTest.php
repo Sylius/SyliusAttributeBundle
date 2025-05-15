@@ -20,10 +20,12 @@ use Symfony\Component\Validator\Constraint;
 final class ValidTextAttributeConfigurationTest extends TestCase
 {
     private ValidTextAttributeConfiguration $validTextAttributeConfiguration;
+
     protected function setUp(): void
     {
         $this->validTextAttributeConfiguration = new ValidTextAttributeConfiguration();
     }
+
     public function testHasTargets(): void
     {
         $this->assertSame(Constraint::CLASS_CONSTRAINT, $this->validTextAttributeConfiguration->getTargets());
