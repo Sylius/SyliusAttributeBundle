@@ -27,10 +27,10 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 final class AttributeTypeValidatorTest extends TestCase
 {
-    /** @var ServiceRegistryInterface|MockObject */
+    /** @var ServiceRegistryInterface&MockObject */
     private MockObject $attributeTypesRegistryMock;
 
-    /** @var ExecutionContextInterface|MockObject */
+    /** @var ExecutionContextInterface&MockObject */
     private MockObject $contextMock;
 
     private AttributeTypeValidator $attributeTypeValidator;
@@ -43,6 +43,11 @@ final class AttributeTypeValidatorTest extends TestCase
         $this->initialize($this->contextMock);
     }
 
+    private function initialize(ExecutionContextInterface $context): void
+    {
+        $this->attributeTypeValidator->initialize($context);
+    }
+
     public function testThrowsExceptionWhenValueIsNotAnAttribute(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -51,9 +56,9 @@ final class AttributeTypeValidatorTest extends TestCase
 
     public function testThrowsExceptionWhenConstraintIsNotAnAttributeType(): void
     {
-        /** @var AttributeInterface|MockObject $attributeMock */
+        /** @var AttributeInterface&MockObject $attributeMock */
         $attributeMock = $this->createMock(AttributeInterface::class);
-        /** @var Constraint|MockObject $constraintMock */
+        /** @var Constraint&MockObject $constraintMock */
         $constraintMock = $this->createMock(Constraint::class);
         $this->expectException(InvalidArgumentException::class);
         $this->attributeTypeValidator->validate($attributeMock, $constraintMock);
@@ -61,7 +66,7 @@ final class AttributeTypeValidatorTest extends TestCase
 
     public function testDoesNothingWhenAttributeTypeIsNull(): void
     {
-        /** @var AttributeInterface|MockObject $attributeMock */
+        /** @var AttributeInterface&MockObject $attributeMock */
         $attributeMock = $this->createMock(AttributeInterface::class);
         $attributeMock->expects($this->once())->method('getType')->willReturn(null);
         $this->attributeTypesRegistryMock->expects($this->never())->method('has');
@@ -71,7 +76,7 @@ final class AttributeTypeValidatorTest extends TestCase
 
     public function testDoesNothingWhenAttributeTypeIsRegistered(): void
     {
-        /** @var AttributeInterface|MockObject $attributeMock */
+        /** @var AttributeInterface&MockObject $attributeMock */
         $attributeMock = $this->createMock(AttributeInterface::class);
         $attributeMock->expects($this->once())->method('getType')->willReturn('foo');
         $this->attributeTypesRegistryMock->expects($this->once())->method('has')->with('foo')->willReturn(true);
@@ -81,9 +86,9 @@ final class AttributeTypeValidatorTest extends TestCase
 
     public function testAddsViolationWhenAttributeTypeIsNotRegistered(): void
     {
-        /** @var ConstraintViolationBuilderInterface|MockObject $violationBuilderMock */
+        /** @var ConstraintViolationBuilderInterface&MockObject $violationBuilderMock */
         $violationBuilderMock = $this->createMock(ConstraintViolationBuilderInterface::class);
-        /** @var AttributeInterface|MockObject $attributeMock */
+        /** @var AttributeInterface&MockObject $attributeMock */
         $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new AttributeType();
         $attributeMock->expects($this->once())->method('getType')->willReturn('foo');

@@ -26,7 +26,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final class ValidTextAttributeConfigurationValidatorTest extends TestCase
 {
-    /** @var ExecutionContextInterface|MockObject */
+    /** @var ExecutionContextInterface&MockObject */
     private MockObject $contextMock;
 
     private ValidTextAttributeConfigurationValidator $validTextAttributeConfigurationValidator;
@@ -34,13 +34,18 @@ final class ValidTextAttributeConfigurationValidatorTest extends TestCase
     protected function setUp(): void
     {
         $this->contextMock = $this->createMock(ExecutionContextInterface::class);
-        $this->validTextAttributeConfigurationValidator = new ValidTextAttributeConfigurationValidator($this->contextMock);
+        $this->validTextAttributeConfigurationValidator = new ValidTextAttributeConfigurationValidator();
         $this->initialize($this->contextMock);
+    }
+
+    private function initialize(ExecutionContextInterface $context): void
+    {
+        $this->validTextAttributeConfigurationValidator->initialize($context);
     }
 
     public function testAddsAViolationIfMaxEntriesValueIsLowerThanMinEntriesValue(): void
     {
-        /** @var AttributeInterface|MockObject $attributeMock */
+        /** @var AttributeInterface&MockObject $attributeMock */
         $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidTextAttributeConfiguration();
         $attributeMock->expects($this->once())->method('getType')->willReturn(TextAttributeType::TYPE);
@@ -51,7 +56,7 @@ final class ValidTextAttributeConfigurationValidatorTest extends TestCase
 
     public function testDoesNothingIfAnAttributeIsNotATextType(): void
     {
-        /** @var AttributeInterface|MockObject $attributeMock */
+        /** @var AttributeInterface&MockObject $attributeMock */
         $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidTextAttributeConfiguration();
         $attributeMock->expects($this->once())->method('getType')->willReturn(SelectAttributeType::TYPE);
