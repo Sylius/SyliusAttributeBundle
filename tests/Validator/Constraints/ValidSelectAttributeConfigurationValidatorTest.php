@@ -28,7 +28,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
 {
     private ExecutionContextInterface&MockObject $context;
 
-    private ValidSelectAttributeConfigurationValidator $validSelectAttributeConfigurationValidator;
+    private ValidSelectAttributeConfigurationValidator $validator;
 
     private AttributeInterface&MockObject $attributeMock;
 
@@ -36,14 +36,14 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
     {
         parent::setUp();
         $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->validSelectAttributeConfigurationValidator = new ValidSelectAttributeConfigurationValidator();
-        $this->initialize($this->context);
+        $this->validator = new ValidSelectAttributeConfigurationValidator();
         $this->attributeMock = $this->createMock(AttributeInterface::class);
+        $this->initialize($this->context);
     }
 
     private function initialize(ExecutionContextInterface $context): void
     {
-        $this->validSelectAttributeConfigurationValidator->initialize($context);
+        $this->validator->initialize($context);
     }
 
     public function testAddsAViolationIfMaxEntriesValueIsLowerThanMinEntriesValue(): void
@@ -57,7 +57,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
 
         $this->context->expects(self::once())->method('addViolation');
 
-        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
+        $this->validator->validate($this->attributeMock, $constraint);
     }
 
     public function testAddsAViolationIfMinEntriesValueIsGreaterThanTheNumberOfAddedChoices(): void
@@ -79,7 +79,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
 
         $this->context->expects(self::once())->method('addViolation');
 
-        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
+        $this->validator->validate($this->attributeMock, $constraint);
     }
 
     public function testAddsAViolationIfMultipleIsNotTrueWhenMinOrMaxEntriesValuesAreSpecified(): void
@@ -99,7 +99,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
 
         $this->context->expects(self::once())->method('addViolation');
 
-        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
+        $this->validator->validate($this->attributeMock, $constraint);
     }
 
     public function testAddsAViolationIfMultipleIsNotSetWhenMinOrMaxEntriesValuesAreSpecified(): void
@@ -118,7 +118,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
 
         $this->context->expects(self::once())->method('addViolation');
 
-        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
+        $this->validator->validate($this->attributeMock, $constraint);
     }
 
     public function testDoesNothingIfAnAttributeIsNotASelectType(): void
@@ -128,9 +128,9 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
             ->method('getType')
             ->willReturn(TextAttributeType::TYPE);
 
-        $this->context->expects($this->never())->method('addViolation');
+        $this->context->expects(self::never())->method('addViolation');
 
-        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
+        $this->validator->validate($this->attributeMock, $constraint);
     }
 
     public function testThrowsAnExceptionIfValidatedValueIsNotAnAttribute(): void
@@ -138,7 +138,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
         $constraint = new ValidSelectAttributeConfiguration();
         self::expectException(InvalidArgumentException::class);
 
-        $this->validSelectAttributeConfigurationValidator->validate('badObject', $constraint);
+        $this->validator->validate('badObject', $constraint);
     }
 
     public function testThrowsAnExceptionIfConstraintIsNotAValidSelectAttributeConfigurationConstraint(): void
@@ -146,6 +146,6 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
         $constraint = new ValidTextAttributeConfiguration();
         self::expectException(InvalidArgumentException::class);
 
-        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
+        $this->validator->validate($this->attributeMock, $constraint);
     }
 }

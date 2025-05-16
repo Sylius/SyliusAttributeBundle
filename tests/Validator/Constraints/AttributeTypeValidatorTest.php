@@ -40,9 +40,9 @@ final class AttributeTypeValidatorTest extends TestCase
         parent::setUp();
         $this->attributeTypeRegistry = $this->createMock(ServiceRegistryInterface::class);
         $this->contextMock = $this->createMock(ExecutionContextInterface::class);
+        $this->attribute = $this->createMock(AttributeInterface::class);
         $this->attributeTypeValidator = new AttributeTypeValidator($this->attributeTypeRegistry);
         $this->initialize($this->contextMock);
-        $this->attribute = $this->createMock(AttributeInterface::class);
     }
 
     private function initialize(ExecutionContextInterface $context): void
