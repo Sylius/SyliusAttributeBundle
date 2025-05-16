@@ -26,16 +26,18 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final class ValidTextAttributeConfigurationValidatorTest extends TestCase
 {
-    /** @var ExecutionContextInterface&MockObject */
-    private MockObject $contextMock;
+    private ExecutionContextInterface&MockObject $context;
 
     private ValidTextAttributeConfigurationValidator $validTextAttributeConfigurationValidator;
 
+    private AttributeInterface&MockObject $attributeMock;
+
     protected function setUp(): void
     {
-        $this->contextMock = $this->createMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validTextAttributeConfigurationValidator = new ValidTextAttributeConfigurationValidator();
-        $this->initialize($this->contextMock);
+        $this->initialize($this->context);
+        $this->attributeMock = $this->createMock(AttributeInterface::class);
     }
 
     private function initialize(ExecutionContextInterface $context): void
@@ -45,38 +47,48 @@ final class ValidTextAttributeConfigurationValidatorTest extends TestCase
 
     public function testAddsAViolationIfMaxEntriesValueIsLowerThanMinEntriesValue(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidTextAttributeConfiguration();
-        $attributeMock->expects($this->once())->method('getType')->willReturn(TextAttributeType::TYPE);
-        $attributeMock->expects($this->once())->method('getConfiguration')->willReturn(['min' => 6, 'max' => 4]);
-        $this->contextMock->expects($this->once())->method('addViolation');
-        $this->validTextAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        $this->attributeMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(TextAttributeType::TYPE);
+
+        $this->attributeMock->expects(self::once())
+            ->method('getConfiguration')
+            ->willReturn([
+                'min' => 6,
+                'max' => 4,
+            ]);
+
+        $this->context->expects(self::once())->method('addViolation');
+
+        $this->validTextAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 
     public function testDoesNothingIfAnAttributeIsNotATextType(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidTextAttributeConfiguration();
-        $attributeMock->expects($this->once())->method('getType')->willReturn(SelectAttributeType::TYPE);
-        $this->contextMock->expects($this->never())->method('addViolation');
-        $this->validTextAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        $this->attributeMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(SelectAttributeType::TYPE);
+
+        $this->context->expects(self::never())->method('addViolation');
+
+        $this->validTextAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 
     public function testThrowsAnExceptionIfValidatedValueIsNotAnAttribute(): void
     {
         $constraint = new ValidTextAttributeConfiguration();
-        $this->expectException(InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
+
         $this->validTextAttributeConfigurationValidator->validate('badObject', $constraint);
     }
 
     public function testThrowsAnExceptionIfConstraintIsNotAValidTextAttributeConfigurationConstraint(): void
     {
-        /** @var AttributeInterface|MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidSelectAttributeConfiguration();
-        $this->expectException(InvalidArgumentException::class);
-        $this->validTextAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        self::expectException(InvalidArgumentException::class);
+
+        $this->validTextAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 }

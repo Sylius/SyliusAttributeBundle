@@ -26,17 +26,19 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
 {
-    /** @var ExecutionContextInterface&MockObject */
-    private MockObject $contextMock;
+    private ExecutionContextInterface&MockObject $context;
 
     private ValidSelectAttributeConfigurationValidator $validSelectAttributeConfigurationValidator;
+
+    private AttributeInterface&MockObject $attributeMock;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->contextMock = $this->createMock(ExecutionContextInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->validSelectAttributeConfigurationValidator = new ValidSelectAttributeConfigurationValidator();
-        $this->initialize($this->contextMock);
+        $this->initialize($this->context);
+        $this->attributeMock = $this->createMock(AttributeInterface::class);
     }
 
     private function initialize(ExecutionContextInterface $context): void
@@ -46,22 +48,26 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
 
     public function testAddsAViolationIfMaxEntriesValueIsLowerThanMinEntriesValue(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidSelectAttributeConfiguration();
-        $attributeMock->expects(self::once())->method('getType')->willReturn(SelectAttributeType::TYPE);
-        $attributeMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn(['multiple' => true, 'min' => 6, 'max' => 4]);
-        $this->contextMock->expects(self::once())->method('addViolation');
-        $this->validSelectAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        $this->attributeMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(SelectAttributeType::TYPE);
+
+        $this->attributeMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn(['multiple' => true, 'min' => 6, 'max' => 4]);
+
+        $this->context->expects(self::once())->method('addViolation');
+
+        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 
     public function testAddsAViolationIfMinEntriesValueIsGreaterThanTheNumberOfAddedChoices(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidSelectAttributeConfiguration();
-        $attributeMock->expects(self::once())->method('getType')->willReturn(SelectAttributeType::TYPE);
-        $attributeMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn([
+        $this->attributeMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(SelectAttributeType::TYPE);
+
+        $this->attributeMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn([
             'multiple' => true,
             'min' => 4,
             'max' => 6,
@@ -70,55 +76,76 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
                 '63148775-be39-47eb-8afd-a4818981e3c0' => 'Watermelon',
             ],
         ]);
-        $this->contextMock->expects(self::once())->method('addViolation');
-        $this->validSelectAttributeConfigurationValidator->validate($attributeMock, $constraint);
+
+        $this->context->expects(self::once())->method('addViolation');
+
+        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 
     public function testAddsAViolationIfMultipleIsNotTrueWhenMinOrMaxEntriesValuesAreSpecified(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidSelectAttributeConfiguration();
-        $attributeMock->expects(self::once())->method('getType')->willReturn(SelectAttributeType::TYPE);
-        $attributeMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn(['multiple' => false, 'min' => 4, 'max' => 6]);
-        $this->contextMock->expects(self::once())->method('addViolation');
-        $this->validSelectAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        $this->attributeMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(SelectAttributeType::TYPE);
+
+        $this->attributeMock->expects(self::atLeastOnce())
+            ->method('getConfiguration')
+            ->willReturn([
+                'multiple' => false,
+                'min' => 4,
+                'max' => 6,
+            ]);
+
+        $this->context->expects(self::once())->method('addViolation');
+
+        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 
     public function testAddsAViolationIfMultipleIsNotSetWhenMinOrMaxEntriesValuesAreSpecified(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidSelectAttributeConfiguration();
-        $attributeMock->expects(self::once())->method('getType')->willReturn(SelectAttributeType::TYPE);
-        $attributeMock->expects(self::atLeastOnce())->method('getConfiguration')->willReturn(['min' => 4, 'max' => 6]);
-        $this->contextMock->expects(self::once())->method('addViolation');
-        $this->validSelectAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        $this->attributeMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(SelectAttributeType::TYPE);
+
+        $this->attributeMock->expects(self::atLeastOnce())
+            ->method('getConfiguration')
+            ->willReturn([
+                'min' => 4,
+                'max' => 6,
+            ]);
+
+        $this->context->expects(self::once())->method('addViolation');
+
+        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 
     public function testDoesNothingIfAnAttributeIsNotASelectType(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidSelectAttributeConfiguration();
-        $attributeMock->expects(self::once())->method('getType')->willReturn(TextAttributeType::TYPE);
-        $this->contextMock->expects($this->never())->method('addViolation');
-        $this->validSelectAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        $this->attributeMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(TextAttributeType::TYPE);
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 
     public function testThrowsAnExceptionIfValidatedValueIsNotAnAttribute(): void
     {
         $constraint = new ValidSelectAttributeConfiguration();
-        $this->expectException(InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
+
         $this->validSelectAttributeConfigurationValidator->validate('badObject', $constraint);
     }
 
     public function testThrowsAnExceptionIfConstraintIsNotAValidSelectAttributeConfigurationConstraint(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
         $constraint = new ValidTextAttributeConfiguration();
-        $this->expectException(InvalidArgumentException::class);
-        $this->validSelectAttributeConfigurationValidator->validate($attributeMock, $constraint);
+        self::expectException(InvalidArgumentException::class);
+
+        $this->validSelectAttributeConfigurationValidator->validate($this->attributeMock, $constraint);
     }
 }

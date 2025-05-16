@@ -28,20 +28,19 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 final class ValidAttributeValueValidatorTest extends TestCase
 {
-    /** @var ServiceRegistryInterface&MockObject */
-    private MockObject $attributeTypesRegistryMock;
+    private MockObject&ServiceRegistryInterface $attributeTypesRegistry;
 
-    /** @var ExecutionContextInterface&MockObject */
-    private MockObject $contextMock;
+    private ExecutionContextInterface&MockObject $context;
 
     private ValidAttributeValueValidator $validAttributeValueValidator;
 
     protected function setUp(): void
     {
-        $this->attributeTypesRegistryMock = $this->createMock(ServiceRegistryInterface::class);
-        $this->contextMock = $this->createMock(ExecutionContextInterface::class);
-        $this->validAttributeValueValidator = new ValidAttributeValueValidator($this->attributeTypesRegistryMock);
-        $this->initialize($this->contextMock);
+        parent::setUp();
+        $this->attributeTypesRegistry = $this->createMock(ServiceRegistryInterface::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
+        $this->validAttributeValueValidator = new ValidAttributeValueValidator($this->attributeTypesRegistry);
+        $this->initialize($this->context);
     }
 
     private function initialize(ExecutionContextInterface $context): void
@@ -59,11 +58,35 @@ final class ValidAttributeValueValidatorTest extends TestCase
         $attributeValueMock = $this->createMock(AttributeValueInterface::class);
         /** @var ValidAttributeValue&MockObject $attributeValueConstraintMock */
         $attributeValueConstraintMock = $this->createMock(ValidAttributeValue::class);
-        $attributeValueMock->expects($this->once())->method('getType')->willReturn(TextAttributeType::TYPE);
-        $this->attributeTypesRegistryMock->expects($this->once())->method('get')->with('text')->willReturn($attributeTypeMock);
-        $attributeValueMock->expects($this->once())->method('getAttribute')->willReturn($attributeMock);
-        $attributeMock->expects($this->once())->method('getConfiguration')->willReturn(['min' => 2, 'max' => 255]);
-        $attributeTypeMock->expects($this->once())->method('validate')->with($attributeValueMock, $this->isInstanceOf(ExecutionContextInterface::class), ['min' => 2, 'max' => 255]);
+
+        $attributeValueMock->expects(self::once())
+            ->method('getType')
+            ->willReturn(TextAttributeType::TYPE);
+
+        $this->attributeTypesRegistry->expects(self::once())
+            ->method('get')
+            ->with('text')
+            ->willReturn($attributeTypeMock);
+
+        $attributeValueMock->expects(self::once())
+            ->method('getAttribute')
+            ->willReturn($attributeMock);
+
+        $attributeMock->expects(self::once())
+            ->method('getConfiguration')
+            ->willReturn(['min' => 2, 'max' => 255]);
+
+        $attributeTypeMock->expects(self::once())
+            ->method('validate')
+            ->with(
+                $attributeValueMock,
+                $this->isInstanceOf(ExecutionContextInterface::class),
+                [
+                    'min' => 2,
+                    'max' => 255,
+                ],
+            );
+
         $this->validAttributeValueValidator->validate($attributeValueMock, $attributeValueConstraintMock);
     }
 
@@ -73,8 +96,12 @@ final class ValidAttributeValueValidatorTest extends TestCase
         $badObjectMock = $this->createMock(DateTime::class);
         /** @var ValidAttributeValue&MockObject $attributeValueConstraintMock */
         $attributeValueConstraintMock = $this->createMock(ValidAttributeValue::class);
-        $this->expectException(UnexpectedTypeException::class);
-        $this->expectExceptionMessage('Expected argument of type "Sylius\Component\Attribute\Model\AttributeValueInterface", "string" given.');
+
+        self::expectException(UnexpectedTypeException::class);
+        self::expectExceptionMessage(
+            'Expected argument of type "Sylius\Component\Attribute\Model\AttributeValueInterface", "string" given.',
+        );
+
         $this->validAttributeValueValidator->validate($badObjectMock, $attributeValueConstraintMock);
     }
 }

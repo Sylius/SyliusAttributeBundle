@@ -26,6 +26,14 @@ final class LoadMetadataSubscriberTest extends TestCase
 {
     private LoadMetadataSubscriber $loadMetadataSubscriber;
 
+    private LoadClassMetadataEventArgs&MockObject $eventArgs;
+
+    private ClassMetadata&MockObject $metadata;
+
+    private EntityManager&MockObject $entityManager;
+
+    private ClassMetadataFactory&MockObject $classMetadataFactory;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,6 +52,10 @@ final class LoadMetadataSubscriberTest extends TestCase
                 ],
             ],
         ]);
+        $this->eventArgs = $this->createMock(LoadClassMetadataEventArgs::class);
+        $this->metadata = $this->createMock(ClassMetadata::class);
+        $this->entityManager = $this->createMock(EntityManager::class);
+        $this->classMetadataFactory = $this->createMock(ClassMetadataFactory::class);
     }
 
     public function testADoctrineEventSubscriber(): void
@@ -58,30 +70,19 @@ final class LoadMetadataSubscriberTest extends TestCase
 
     public function testMapsManyToOneAssociationsFromAttributeValueModelToSubjectModelAndAttributeModel(): void
     {
-        /** @var LoadClassMetadataEventArgs&MockObject $eventArgs */
-        $eventArgs = $this->createMock(LoadClassMetadataEventArgs::class);
-        /** @var ClassMetadata&MockObject $metadata */
-        $metadata = $this->createMock(ClassMetadata::class);
-        /** @var EntityManager&MockObject $entityManager */
-        $entityManager = $this->createMock(EntityManager::class);
-        /** @var ClassMetadataFactory&MockObject $classMetadataFactory */
-        $classMetadataFactory = $this->createMock(ClassMetadataFactory::class);
-        /** @var ClassMetadata&MockObject $classMetadata */
-        $classMetadata = $this->createMock(ClassMetadata::class);
-
-        $eventArgs->expects($this->once())
+        $this->eventArgs->expects(self::once())
             ->method('getClassMetadata')
-            ->willReturn($metadata);
+            ->willReturn($this->metadata);
 
-        $eventArgs->expects($this->once())
+        $this->eventArgs->expects(self::once())
             ->method('getEntityManager')
-            ->willReturn($entityManager);
+            ->willReturn($this->entityManager);
 
-        $entityManager->expects($this->once())
+        $this->entityManager->expects(self::once())
             ->method('getMetadataFactory')
-            ->willReturn($classMetadataFactory);
+            ->willReturn($this->classMetadataFactory);
 
-        $classMetadata->fieldMappings = [
+        $this->metadata->fieldMappings = [
             'id' => [
                 'columnName' => 'id',
                 'type' => 'integer',
@@ -91,18 +92,18 @@ final class LoadMetadataSubscriberTest extends TestCase
             ],
         ];
 
-        $classMetadataFactory->expects($this->exactly(2))
+        $this->classMetadataFactory->expects(self::exactly(2))
             ->method('getMetadataFor')
             ->willReturnMap([
-                ['Some\App\Product\Entity\Product', $classMetadata],
-                ['Some\App\Product\Entity\Attribute', $classMetadata],
+                ['Some\App\Product\Entity\Product', $this->metadata],
+                ['Some\App\Product\Entity\Attribute', $this->metadata],
             ]);
 
-        $metadata->expects($this->once())
+        $this->metadata->expects(self::once())
             ->method('getName')
             ->willReturn('Some\App\Product\Entity\AttributeValue');
 
-        $metadata->expects($this->exactly(2))
+        $this->metadata->expects(self::exactly(2))
             ->method('hasAssociation')
             ->willReturnMap([
                 ['subject', false],
@@ -131,74 +132,90 @@ final class LoadMetadataSubscriberTest extends TestCase
             ]],
         ];
 
-        $metadata->expects($this->exactly(2))
+        $this->metadata->expects(self::exactly(2))
             ->method('mapManyToOne')
             ->willReturnCallback(function ($mapping) use ($subjectMapping, $attributeMapping) {
                 static $callCount = 0;
                 ++$callCount;
 
                 if ($callCount === 1) {
-                    $this->assertEquals($subjectMapping, $mapping);
+                    self::assertEquals($subjectMapping, $mapping);
                 } elseif ($callCount === 2) {
-                    $this->assertEquals($attributeMapping, $mapping);
+                    self::assertEquals($attributeMapping, $mapping);
                 }
             });
 
-        $this->loadMetadataSubscriber->loadClassMetadata($eventArgs);
+        $this->loadMetadataSubscriber->loadClassMetadata($this->eventArgs);
     }
 
     public function testDoesNotMapRelationsForAttributeValueModelIfTheRelationsAlreadyExist(): void
     {
-        /** @var LoadClassMetadataEventArgs&MockObject $eventArgsMock */
-        $eventArgsMock = $this->createMock(LoadClassMetadataEventArgs::class);
-        /** @var ClassMetadata&MockObject $metadataMock */
-        $metadataMock = $this->createMock(ClassMetadata::class);
-        /** @var EntityManager&MockObject $entityManagerMock */
-        $entityManagerMock = $this->createMock(EntityManager::class);
-        /** @var ClassMetadataFactory&MockObject $classMetadataFactoryMock */
-        $classMetadataFactoryMock = $this->createMock(ClassMetadataFactory::class);
-        $eventArgsMock->expects($this->once())->method('getClassMetadata')->willReturn($metadataMock);
-        $eventArgsMock->expects($this->once())->method('getEntityManager')->willReturn($entityManagerMock);
-        $entityManagerMock->expects($this->once())->method('getMetadataFactory')->willReturn($classMetadataFactoryMock);
-        $metadataMock->expects($this->once())->method('getName')->willReturn('Some\App\Product\Entity\AttributeValue');
-        $metadataMock->expects($this->exactly(2))->method('hasAssociation')->willReturnMap([['subject', true], ['attribute', true]]);
-        $metadataMock->expects($this->never())->method('mapManyToOne');
-        $this->loadMetadataSubscriber->loadClassMetadata($eventArgsMock);
+        $this->eventArgs->expects(self::once())
+            ->method('getClassMetadata')
+            ->willReturn($this->metadata);
+
+        $this->eventArgs->expects(self::once())
+            ->method('getEntityManager')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager->expects(self::once())
+            ->method('getMetadataFactory')
+            ->willReturn($this->classMetadataFactory);
+
+        $this->metadata->expects(self::once())
+            ->method('getName')
+            ->willReturn('Some\App\Product\Entity\AttributeValue');
+
+        $this->metadata->expects(self::exactly(2))
+            ->method('hasAssociation')
+            ->willReturnMap([['subject', true], ['attribute', true]]);
+
+        $this->metadata->expects(self::never())->method('mapManyToOne');
+
+        $this->loadMetadataSubscriber->loadClassMetadata($this->eventArgs);
     }
 
     public function testDoesNotAddAManyToOneMappingIfTheClassIsNotAConfiguredAttributeValueModel(): void
     {
-        /** @var LoadClassMetadataEventArgs&MockObject $eventArgsMock */
-        $eventArgsMock = $this->createMock(LoadClassMetadataEventArgs::class);
-        /** @var ClassMetadata&MockObject $metadataMock */
-        $metadataMock = $this->createMock(ClassMetadata::class);
-        /** @var EntityManager&MockObject $entityManagerMock */
-        $entityManagerMock = $this->createMock(EntityManager::class);
-        /** @var ClassMetadataFactory&MockObject $classMetadataFactoryMock */
-        $classMetadataFactoryMock = $this->createMock(ClassMetadataFactory::class);
-        $eventArgsMock->expects($this->once())->method('getEntityManager')->willReturn($entityManagerMock);
-        $entityManagerMock->expects($this->once())->method('getMetadataFactory')->willReturn($classMetadataFactoryMock);
-        $eventArgsMock->expects($this->once())->method('getClassMetadata')->willReturn($metadataMock);
-        $metadataMock->expects($this->once())->method('getName')->willReturn('KeepMoving\ThisClass\DoesNot\Concern\You');
-        $metadataMock->expects($this->never())->method('mapManyToOne');
-        $this->loadMetadataSubscriber->loadClassMetadata($eventArgsMock);
+        $this->eventArgs->expects(self::once())
+            ->method('getEntityManager')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager->expects(self::once())
+            ->method('getMetadataFactory')
+            ->willReturn($this->classMetadataFactory);
+
+        $this->eventArgs->expects(self::once())
+            ->method('getClassMetadata')
+            ->willReturn($this->metadata);
+
+        $this->metadata->expects(self::once())
+            ->method('getName')
+            ->willReturn('KeepMoving\ThisClass\DoesNot\Concern\You');
+
+        $this->metadata->expects(self::never())->method('mapManyToOne');
+
+        $this->loadMetadataSubscriber->loadClassMetadata($this->eventArgs);
     }
 
     public function testDoesNotAddValuesOneToManyMappingIfTheClassIsNotAConfiguredAttributeModel(): void
     {
-        /** @var LoadClassMetadataEventArgs&MockObject $eventArgsMock */
-        $eventArgsMock = $this->createMock(LoadClassMetadataEventArgs::class);
-        /** @var ClassMetadata&MockObject $metadataMock */
-        $metadataMock = $this->createMock(ClassMetadata::class);
-        /** @var EntityManager&MockObject $entityManagerMock */
-        $entityManagerMock = $this->createMock(EntityManager::class);
-        /** @var ClassMetadataFactory&MockObject $classMetadataFactoryMock */
-        $classMetadataFactoryMock = $this->createMock(ClassMetadataFactory::class);
-        $eventArgsMock->expects($this->once())->method('getEntityManager')->willReturn($entityManagerMock);
-        $entityManagerMock->expects($this->once())->method('getMetadataFactory')->willReturn($classMetadataFactoryMock);
-        $eventArgsMock->expects($this->once())->method('getClassMetadata')->willReturn($metadataMock);
-        $metadataMock->expects($this->once())->method('getName')->willReturn('KeepMoving\ThisClass\DoesNot\Concern\You');
-        $metadataMock->expects($this->never())->method('mapOneToMany');
-        $this->loadMetadataSubscriber->loadClassMetadata($eventArgsMock);
+        $this->eventArgs->expects(self::once())
+            ->method('getEntityManager')
+            ->willReturn($this->entityManager);
+
+        $this->entityManager->expects(self::once())
+            ->method('getMetadataFactory')
+            ->willReturn($this->classMetadataFactory);
+
+        $this->eventArgs->expects(self::once())->method('getClassMetadata')->willReturn($this->metadata);
+
+        $this->metadata->expects(self::once())
+            ->method('getName')
+            ->willReturn('KeepMoving\ThisClass\DoesNot\Concern\You');
+
+        $this->metadata->expects(self::never())->method('mapOneToMany');
+
+        $this->loadMetadataSubscriber->loadClassMetadata($this->eventArgs);
     }
 }

@@ -23,16 +23,17 @@ final class ValidAttributeValueTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->validAttributeValue = new ValidAttributeValue();
     }
 
     public function testHasTargets(): void
     {
-        $this->assertSame(Constraint::CLASS_CONSTRAINT, $this->validAttributeValue->getTargets());
+        self::assertSame(Constraint::CLASS_CONSTRAINT, $this->validAttributeValue->getTargets());
     }
 
     public function testValidatedBySpecificValidator(): void
     {
-        $this->assertSame('sylius_valid_attribute_value_validator', $this->validAttributeValue->validatedBy());
+        self::assertSame('sylius_valid_attribute_value_validator', $this->validAttributeValue->validatedBy());
     }
 }

@@ -23,16 +23,20 @@ final class ValidTextAttributeConfigurationTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->validTextAttributeConfiguration = new ValidTextAttributeConfiguration();
     }
 
     public function testHasTargets(): void
     {
-        $this->assertSame(Constraint::CLASS_CONSTRAINT, $this->validTextAttributeConfiguration->getTargets());
+        self::assertSame(Constraint::CLASS_CONSTRAINT, $this->validTextAttributeConfiguration->getTargets());
     }
 
     public function testValidatedBySpecificValidator(): void
     {
-        $this->assertSame('sylius_valid_text_attribute_validator', $this->validTextAttributeConfiguration->validatedBy());
+        self::assertSame(
+            'sylius_valid_text_attribute_validator',
+            $this->validTextAttributeConfiguration->validatedBy(),
+        );
     }
 }

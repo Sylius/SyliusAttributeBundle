@@ -27,20 +27,22 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 final class AttributeTypeValidatorTest extends TestCase
 {
-    /** @var ServiceRegistryInterface&MockObject */
-    private MockObject $attributeTypesRegistryMock;
+    private MockObject&ServiceRegistryInterface $attributeTypeRegistry;
 
-    /** @var ExecutionContextInterface&MockObject */
-    private MockObject $contextMock;
+    private ExecutionContextInterface&MockObject $contextMock;
 
     private AttributeTypeValidator $attributeTypeValidator;
 
+    private AttributeInterface&MockObject $attribute;
+
     protected function setUp(): void
     {
-        $this->attributeTypesRegistryMock = $this->createMock(ServiceRegistryInterface::class);
+        parent::setUp();
+        $this->attributeTypeRegistry = $this->createMock(ServiceRegistryInterface::class);
         $this->contextMock = $this->createMock(ExecutionContextInterface::class);
-        $this->attributeTypeValidator = new AttributeTypeValidator($this->attributeTypesRegistryMock);
+        $this->attributeTypeValidator = new AttributeTypeValidator($this->attributeTypeRegistry);
         $this->initialize($this->contextMock);
+        $this->attribute = $this->createMock(AttributeInterface::class);
     }
 
     private function initialize(ExecutionContextInterface $context): void
@@ -50,56 +52,86 @@ final class AttributeTypeValidatorTest extends TestCase
 
     public function testThrowsExceptionWhenValueIsNotAnAttribute(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        self::expectException(InvalidArgumentException::class);
+
         $this->attributeTypeValidator->validate(new stdClass(), new AttributeType());
     }
 
     public function testThrowsExceptionWhenConstraintIsNotAnAttributeType(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
-        /** @var Constraint&MockObject $constraintMock */
-        $constraintMock = $this->createMock(Constraint::class);
-        $this->expectException(InvalidArgumentException::class);
-        $this->attributeTypeValidator->validate($attributeMock, $constraintMock);
+        /** @var Constraint&MockObject $constraint */
+        $constraint = $this->createMock(Constraint::class);
+
+        self::expectException(InvalidArgumentException::class);
+
+        $this->attributeTypeValidator->validate($this->attribute, $constraint);
     }
 
     public function testDoesNothingWhenAttributeTypeIsNull(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
-        $attributeMock->expects($this->once())->method('getType')->willReturn(null);
-        $this->attributeTypesRegistryMock->expects($this->never())->method('has');
-        $this->contextMock->expects($this->never())->method('addViolation');
-        $this->attributeTypeValidator->validate($attributeMock, new AttributeType());
+        $this->attribute->expects(self::once())->method('getType')->willReturn(null);
+
+        $this->attributeTypeRegistry->expects(self::never())->method('has');
+
+        $this->contextMock->expects(self::never())->method('addViolation');
+
+        $this->attributeTypeValidator->validate($this->attribute, new AttributeType());
     }
 
     public function testDoesNothingWhenAttributeTypeIsRegistered(): void
     {
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
-        $attributeMock->expects($this->once())->method('getType')->willReturn('foo');
-        $this->attributeTypesRegistryMock->expects($this->once())->method('has')->with('foo')->willReturn(true);
-        $this->contextMock->expects($this->never())->method('addViolation');
-        $this->attributeTypeValidator->validate($attributeMock, new AttributeType());
+        $this->attribute->expects(self::once())->method('getType')->willReturn('foo');
+
+        $this->attributeTypeRegistry->expects(self::once())
+            ->method('has')
+            ->with('foo')
+            ->willReturn(true);
+
+        $this->contextMock->expects(self::never())->method('addViolation');
+
+        $this->attributeTypeValidator->validate($this->attribute, new AttributeType());
     }
 
     public function testAddsViolationWhenAttributeTypeIsNotRegistered(): void
     {
-        /** @var ConstraintViolationBuilderInterface&MockObject $violationBuilderMock */
-        $violationBuilderMock = $this->createMock(ConstraintViolationBuilderInterface::class);
-        /** @var AttributeInterface&MockObject $attributeMock */
-        $attributeMock = $this->createMock(AttributeInterface::class);
+        /** @var ConstraintViolationBuilderInterface&MockObject $violationBuilder */
+        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
         $constraint = new AttributeType();
-        $attributeMock->expects($this->once())->method('getType')->willReturn('foo');
-        $this->attributeTypesRegistryMock->expects($this->once())->method('has')->with('foo')->willReturn(false);
-        $this->attributeTypesRegistryMock->expects($this->once())->method('all')->willReturn(['foo_attribute_name' => 'foo_value', 'bar_attribute_name' => 'bar_value']);
-        $this->contextMock->expects($this->once())->method('buildViolation')->with($constraint->unregisteredAttributeTypeMessage, [
-            '%type%' => 'foo', '%available_types%' => 'foo_attribute_name, bar_attribute_name',
-        ])
-            ->willReturn($violationBuilderMock);
-        $violationBuilderMock->expects($this->once())->method('atPath')->with('type')->willReturn($violationBuilderMock);
-        $violationBuilderMock->expects($this->once())->method('addViolation');
-        $this->attributeTypeValidator->validate($attributeMock, $constraint);
+
+        $this->attribute->expects(self::once())->method('getType')->willReturn('foo');
+
+        $this->attributeTypeRegistry->expects(self::once())
+            ->method('has')
+            ->with('foo')
+            ->willReturn(false);
+
+        $this->attributeTypeRegistry->expects(self::once())
+            ->method('all')
+            ->willReturn(
+                [
+                    'foo_attribute_name' => 'foo_value',
+                    'bar_attribute_name' => 'bar_value',
+                ],
+            );
+
+        $this->contextMock->expects(self::once())
+            ->method('buildViolation')
+            ->with(
+                $constraint->unregisteredAttributeTypeMessage,
+                [
+                    '%type%' => 'foo',
+                    '%available_types%' => 'foo_attribute_name, bar_attribute_name',
+                ],
+            )
+            ->willReturn($violationBuilder);
+
+        $violationBuilder->expects(self::once())
+            ->method('atPath')
+            ->with('type')
+            ->willReturn($violationBuilder);
+
+        $violationBuilder->expects(self::once())->method('addViolation');
+
+        $this->attributeTypeValidator->validate($this->attribute, $constraint);
     }
 }

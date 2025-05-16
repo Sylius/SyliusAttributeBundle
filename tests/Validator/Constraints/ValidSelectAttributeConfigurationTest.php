@@ -23,16 +23,17 @@ final class ValidSelectAttributeConfigurationTest extends TestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
         $this->validSelectAttributeConfiguration = new ValidSelectAttributeConfiguration();
     }
 
     public function testHasTargets(): void
     {
-        $this->assertSame(Constraint::CLASS_CONSTRAINT, $this->validSelectAttributeConfiguration->getTargets());
+        self::assertSame(Constraint::CLASS_CONSTRAINT, $this->validSelectAttributeConfiguration->getTargets());
     }
 
     public function testValidatedBySpecificValidator(): void
     {
-        $this->assertSame('sylius_valid_select_attribute_validator', $this->validSelectAttributeConfiguration->validatedBy());
+        self::assertSame('sylius_valid_select_attribute_validator', $this->validSelectAttributeConfiguration->validatedBy());
     }
 }
