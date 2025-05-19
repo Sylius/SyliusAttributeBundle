@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Sylius\Bundle\AttributeBundle\Validator\Constraints;
+namespace Sylius\Bundle\AttributeBundle\Tests\Validator\Constraints;
 
 use DateTime;
 use PHPUnit\Framework\MockObject\MockObject;

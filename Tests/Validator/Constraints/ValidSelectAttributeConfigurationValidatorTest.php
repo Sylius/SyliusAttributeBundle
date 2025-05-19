@@ -11,9 +11,8 @@
 
 declare(strict_types=1);
 
-namespace Tests\Sylius\Bundle\AttributeBundle\Validator\Constraints;
+namespace Sylius\Bundle\AttributeBundle\Tests\Validator\Constraints;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidSelectAttributeConfiguration;
@@ -136,7 +135,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
     public function testThrowsAnExceptionIfValidatedValueIsNotAnAttribute(): void
     {
         $constraint = new ValidSelectAttributeConfiguration();
-        self::expectException(InvalidArgumentException::class);
+        self::expectException(\InvalidArgumentException::class);
 
         $this->validator->validate('badObject', $constraint);
     }
@@ -144,7 +143,7 @@ final class ValidSelectAttributeConfigurationValidatorTest extends TestCase
     public function testThrowsAnExceptionIfConstraintIsNotAValidSelectAttributeConfigurationConstraint(): void
     {
         $constraint = new ValidTextAttributeConfiguration();
-        self::expectException(InvalidArgumentException::class);
+        self::expectException(\InvalidArgumentException::class);
 
         $this->validator->validate($this->attributeMock, $constraint);
     }

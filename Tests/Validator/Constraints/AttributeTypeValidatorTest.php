@@ -11,12 +11,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Sylius\Bundle\AttributeBundle\Validator\Constraints;
+namespace Sylius\Bundle\AttributeBundle\Tests\Validator\Constraints;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\AttributeType;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\AttributeTypeValidator;
 use Sylius\Component\Attribute\Model\AttributeInterface;
@@ -52,9 +50,9 @@ final class AttributeTypeValidatorTest extends TestCase
 
     public function testThrowsExceptionWhenValueIsNotAnAttribute(): void
     {
-        self::expectException(InvalidArgumentException::class);
+        self::expectException(\InvalidArgumentException::class);
 
-        $this->attributeTypeValidator->validate(new stdClass(), new AttributeType());
+        $this->attributeTypeValidator->validate(new \stdClass(), new AttributeType());
     }
 
     public function testThrowsExceptionWhenConstraintIsNotAnAttributeType(): void
@@ -62,7 +60,7 @@ final class AttributeTypeValidatorTest extends TestCase
         /** @var Constraint&MockObject $constraint */
         $constraint = $this->createMock(Constraint::class);
 
-        self::expectException(InvalidArgumentException::class);
+        self::expectException(\InvalidArgumentException::class);
 
         $this->attributeTypeValidator->validate($this->attribute, $constraint);
     }
