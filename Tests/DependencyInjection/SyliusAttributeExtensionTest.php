@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Sylius\Bundle\AttributeBundle\Tests\DependencyInjection;
 
 use Matthias\SymfonyDependencyInjectionTest\PhpUnit\AbstractExtensionTestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Sylius\Bundle\AttributeBundle\Attribute\AsAttributeType;
 use Sylius\Bundle\AttributeBundle\DependencyInjection\SyliusAttributeExtension;
 use Sylius\Bundle\AttributeBundle\Tests\Stub\AttributeTypeStub;
@@ -21,7 +22,7 @@ use Symfony\Component\DependencyInjection\Definition;
 
 final class SyliusAttributeExtensionTest extends AbstractExtensionTestCase
 {
-    /** @test */
+    #[Test]
     public function it_autoconfigures_attribute_type_with_attribute(): void
     {
         $this->container->setDefinition(
@@ -47,7 +48,7 @@ final class SyliusAttributeExtensionTest extends AbstractExtensionTestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_autoconfigures_attribute_type_with_attribute_configuration(): void
     {
         $this->container->setDefinition(
