@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Sylius\Bundle\AttributeBundle\Tests\Form\Type\AttributeType;
+namespace Tests\Sylius\Bundle\AttributeBundle\Form\Type\AttributeType;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\Test;
