@@ -33,7 +33,7 @@ sylius:
             select:
                 multiple: 'Multiplo'
                 values: 'Valori'
-                choose: 'Scegli un\'opzione'
+                choose: 'Scegli un''opzione'
                 min: 'Min. voci'
                 max: 'Max. voci'
             text:
