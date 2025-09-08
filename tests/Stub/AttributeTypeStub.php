@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Sylius\Bundle\AttributeBundle\Tests\Stub;
+namespace Tests\Sylius\Bundle\AttributeBundle\Stub;
 
 use Sylius\Bundle\AttributeBundle\Attribute\AsAttributeType;
 use Sylius\Component\Attribute\AttributeType\AttributeTypeInterface;

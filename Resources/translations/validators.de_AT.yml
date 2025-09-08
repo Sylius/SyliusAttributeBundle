@@ -14,10 +14,10 @@ sylius:
             regex: 'Der Attributcode darf nur aus Buchstaben, Zahlen, Bindestrichen und Unterstrichen bestehen.'
             unique: 'Dieser Code wird bereits verwendet.'
         configuration:
-            max_entries: 'Der Wert für die maximalen Einträge in der Konfiguration muss größer oder gleich dem Wert für minimale Einträge sein.'
+            max_entries: 'Der Wert für die maximalen Einträge in der Konfiguration muss größer oder gleich dem Wert für die minimalen Einträge sein.'
             max_length: 'Die maximale Länge der Konfiguration muss größer oder gleich der minimalen Länge sein.'
             min_entries: 'Der Wert für die minimalen Einträge in der Konfiguration muss kleiner oder gleich der Anzahl der hinzugefügten Auswahlmöglichkeiten sein.'
-            multiple: 'Die Konfiguration "Mehrere" muss auf "true" gesetzt werden, wenn Werte für minimale oder maximale Einträge angegeben sind.'
+            multiple: 'Die Konfiguration für mehrere Einträge muss wahr sein, wenn minimale oder maximale Eintragswerte angegeben sind.'
         presentation:
             not_blank: 'Bitte geben Sie die Attributpräsentation ein.'
             min_length: 'Die Attributpräsentation muss mindestens 1 Zeichen lang sein.|Die Attributpräsentation muss mindestens {{ limit }} Zeichen lang sein.'

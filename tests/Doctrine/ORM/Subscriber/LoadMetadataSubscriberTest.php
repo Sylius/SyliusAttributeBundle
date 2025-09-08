@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Sylius\Bundle\AttributeBundle\Tests\Doctrine\ORM\Subscriber;
+namespace Tests\Sylius\Bundle\AttributeBundle\Doctrine\ORM\Subscriber;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;

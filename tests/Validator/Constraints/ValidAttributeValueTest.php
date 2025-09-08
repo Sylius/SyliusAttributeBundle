@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-namespace Sylius\Bundle\AttributeBundle\Tests\Validator\Constraints;
+namespace Tests\Sylius\Bundle\AttributeBundle\Validator\Constraints;
 
 use PHPUnit\Framework\TestCase;
 use Sylius\Bundle\AttributeBundle\Validator\Constraints\ValidAttributeValue;
